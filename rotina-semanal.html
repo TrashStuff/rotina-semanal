@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana Ideal — Rotina</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Kalam:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper: #f7f2e9;
+    --paper-line: #e3dccb;
+    --ink: #2b2620;
+    --ink-soft: #6b6256;
+    --ink-faint: #a39c8c;
+
+    --c-freela:    #c9e8de;  /* menta */
+    --c-freela-d:  #7fb8a6;
+    --c-usina:     #f6d9b8;  /* pêssego */
+    --c-usina-d:   #d9a566;
+    --c-vagas:     #c7d8e6;  /* azul-cinza */
+    --c-vagas-d:   #8aa9c2;
+    --c-portfolio: #ddd2ef;  /* lilás */
+    --c-portfolio-d:#ab95d4;
+    --c-artistico: #f7e8ab;  /* amarelo */
+    --c-artistico-d:#dcbb4a;
+    --c-cultural:  #f3cdd9;  /* rosa */
+    --c-cultural-d:#dd8fa6;
+
+    --hand: 'Caveat', cursive;
+    --hand2: 'Kalam', cursive;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 18% 30%, rgba(0,0,0,0.018), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(0,0,0,0.015), transparent 45%);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height: 100vh;
+    padding: 30px 30px 70px;
+  }
+
+  .wrap{ max-width: 1500px; margin: 0 auto; }
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px dashed var(--paper-line);
+  }
+  .title-block h1{
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 52px;
+    margin: 0;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .title-block .sub{
+    font-family: var(--hand2);
+    font-size: 16px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .bunny{
+    font-size: 30px;
+    margin-left: 6px;
+  }
+
+  .reset-btn{
+    background: #fff;
+    border: 1.5px solid var(--paper-line);
+    color: var(--ink-soft);
+    font-family: var(--body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 9px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .15s ease;
+    box-shadow: 1px 2px 0 rgba(0,0,0,0.04);
+  }
+  .reset-btn:hover{
+    border-color: var(--ink-faint);
+    color: var(--ink);
+  }
+  .header-actions{
+    display:flex;
+    gap: 8px;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .layout{
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .board{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 14px;
+  }
+
+  .day-col{
+    background: rgba(255,255,255,0.45);
+    border: 1.5px solid var(--paper-line);
+    border-radius: 14px;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .day-col.is-over{
+    border-color: var(--ink-faint);
+    background: rgba(255,255,255,0.7);
+  }
+
+  .day-head{
+    padding: 12px 12px 8px;
+    text-align: center;
+    border-bottom: 1.5px dashed var(--paper-line);
+  }
+  .day-head .dname{
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .day-head .dcount{
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+  .day-col.weekend .day-head .dname{ color: #8a7f6e; }
+
+  .day-body{
+    flex: 1;
+    padding: 12px 9px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0px;
+    min-height: 140px;
+  }
+
+  .day-body:empty::after{
+    content: "✦";
+    color: var(--ink-faint);
+    font-size: 14px;
+    text-align:center;
+    padding-top: 18px;
+    width:100%;
+  }
+
+  /* connector arrow between stacked cards */
+  .arrow-down{
+    width: 2px;
+    height: 14px;
+    background: var(--ink-faint);
+    position: relative;
+    margin: 0 auto;
+    opacity: 0.55;
+  }
+  .arrow-down::after{
+    content:'';
+    position:absolute;
+    bottom:-1px; left:50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--ink-faint);
+  }
+
+  /* ---------- WASHI TAPE CARD ---------- */
+  .card{
+    position: relative;
+    width: 100%;
+    background: var(--accent, #ddd);
+    border-radius: 3px;
+    padding: 9px 10px 10px;
+    cursor: grab;
+    user-select: none;
+    transition: transform .12s ease, opacity .12s ease, filter .15s ease;
+    box-shadow: 1px 3px 5px rgba(43,38,32,0.13);
+    transform: rotate(var(--tilt, 0deg));
+  }
+  .card::before, .card::after{
+    /* torn-edge feel using a serrated mask */
+    content:'';
+    position:absolute;
+    left:0; right:0;
+    height: 6px;
+    background: inherit;
+  }
+  .card::before{ top:-3px; clip-path: polygon(0% 100%,4% 0%,8% 100%,12% 0%,16% 100%,20% 0%,24% 100%,28% 0%,32% 100%,36% 0%,40% 100%,44% 0%,48% 100%,52% 0%,56% 100%,60% 0%,64% 100%,68% 0%,72% 100%,76% 0%,80% 100%,84% 0%,88% 100%,92% 0%,96% 100%,100% 0%,100% 100%,0 100%); }
+  .card::after{ bottom:-3px; clip-path: polygon(0% 0%,4% 100%,8% 0%,12% 100%,16% 0%,20% 100%,24% 0%,28% 100%,32% 0%,36% 100%,40% 0%,44% 100%,48% 0%,52% 100%,56% 0%,60% 100%,64% 0%,68% 100%,72% 0%,76% 100%,80% 0%,84% 100%,88% 0%,92% 100%,96% 0%,100% 100%,100% 0%,0% 0%); }
+
+  .card:hover{ filter: brightness(1.03); }
+  .card:active{ cursor: grabbing; }
+  .card.dragging{ opacity: 0.3; }
+
+  .card .ctop{
+    display:flex;
+    align-items:flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card .cname{
+    font-family: var(--hand2);
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  .card .ctime{
+    font-family: var(--body);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+  .card .check{
+    flex: none;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink-soft);
+    background: rgba(255,255,255,0.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top: 1px;
+    transition: all .12s ease;
+  }
+  .card .check svg{
+    width: 10px; height: 10px;
+    opacity: 0;
+    transition: opacity .1s ease;
+  }
+  .card.done{ filter: saturate(0.55) brightness(1.02); }
+  .card.done .cname{
+    text-decoration: line-through;
+    color: var(--ink-soft);
+  }
+  .card.done .check{
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .card.done .check svg{ opacity: 1; }
+
+  .card-spacer{ width:100%; }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    background: rgba(255,255,255,0.5);
+    border: 1.5px solid var(--paper-line);
+    border-radius: 14px;
+    padding: 20px 18px;
+    position: sticky;
+    top: 22px;
+  }
+  .sidebar h2{
+    font-family: var(--hand);
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: var(--ink);
+  }
+  .sidebar .sidesub{
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+  }
+
+  .channel{ margin-bottom: 13px; }
+  .channel .chead{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .channel .cname{
+    font-family: var(--body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .channel .cval{
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .channel .cval b{ color: var(--ink); font-weight: 700; }
+
+  .meter{
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .meter .fill{
+    height: 100%;
+    border-radius: 5px;
+    transition: width .25s ease;
+  }
+
+  .totals{
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1.5px dashed var(--paper-line);
+    display:flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .total-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--paper-line);
+  }
+  .total-row .tlabel{
+    font-family: var(--hand2);
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .total-row .tval{
+    font-family: var(--body);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .total-row.all-time{
+    background: linear-gradient(135deg, var(--c-artistico), var(--c-cultural));
+    border: none;
+  }
+  .total-row.all-time .tlabel, .total-row.all-time .tval{ color: #4a3a2a; }
+
+  .hint{
+    margin-top: 16px;
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 1100px){
+    .layout{ grid-template-columns: 1fr; }
+    .board{ grid-template-columns: repeat(7,minmax(150px,1fr)); overflow-x:auto; }
+    .sidebar{ position: static; }
+  }
+  @media (max-width: 700px){
+    body{ padding: 18px; }
+    .board{ grid-template-columns: 1fr; overflow-x: visible; }
+    header.top{ flex-direction: column; align-items: flex-start; }
+    .title-block h1{ font-size: 40px; }
+  }
+
+  :focus-visible{ outline: 2px solid var(--ink-soft); outline-offset: 2px; }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(43,38,32,0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .modal-overlay.open{ display: flex; }
+  .modal-box{
+    background: var(--paper);
+    border: 1.5px solid var(--paper-line);
+    border-radius: 14px;
+    padding: 24px 22px 18px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(43,38,32,0.25);
+  }
+  .modal-text{
+    font-family: var(--hand2);
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 18px;
+  }
+  .modal-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .modal-btn{
+    font-family: var(--body);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 9px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1.5px solid var(--paper-line);
+    background: #fff;
+    color: var(--ink-soft);
+    transition: all .15s ease;
+  }
+  .modal-btn:hover{ filter: brightness(0.97); }
+  .modal-btn.confirm{
+    background: var(--c-cultural);
+    border-color: var(--c-cultural-d);
+    color: var(--ink);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="title-block">
+      <h1>Semana ideal <span class="bunny">🐇</span></h1>
+      <div class="sub">freelas · prospecção · portfólio · arte</div>
+    </div>
+    <div class="header-actions">
+      <button class="reset-btn" id="resetWeekBtn">↺ nova semana</button>
+      <button class="reset-btn" id="resetAllBtn">⟲ zerar tudo</button>
+    </div>
+  </header>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-text" id="modalText"></div>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="modalCancel">cancelar</button>
+        <button class="modal-btn confirm" id="modalConfirm">confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="board" id="board"></div>
+
+    <aside class="sidebar">
+      <h2>Notas</h2>
+      <div class="sidesub">horas concluídas por categoria</div>
+      <div id="channels"></div>
+
+      <div class="totals">
+        <div class="total-row">
+          <div class="tlabel">total da semana</div>
+          <div class="tval" id="weekTotal">0h</div>
+        </div>
+        <div class="total-row all-time">
+          <div class="tlabel">total geral ✦</div>
+          <div class="tval" id="allTimeTotal">0h</div>
+        </div>
+      </div>
+
+      <div class="hint">Clique numa fita pra marcar como feita. Arraste pra reordenar ou mover entre dias. Tudo salvo automaticamente no navegador.</div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'semana-ideal-miguel-v1';
+  const ALLTIME_KEY = 'semana-ideal-miguel-alltime-v1';
+
+  const CATEGORIES = {
+    freela:    { label: 'Freelas atuais',        color: 'var(--c-freela)',    dark: 'var(--c-freela-d)' },
+    usina:     { label: 'Usina',                 color: 'var(--c-usina)',     dark: 'var(--c-usina-d)' },
+    vagas:     { label: 'Busca de vagas',        color: 'var(--c-vagas)',     dark: 'var(--c-vagas-d)' },
+    portfolio: { label: 'Portfólio Game Audio',  color: 'var(--c-portfolio)', dark: 'var(--c-portfolio-d)' },
+    artistico: { label: 'Projeto Artístico',     color: 'var(--c-artistico)', dark: 'var(--c-artistico-d)' },
+    cultural:  { label: 'Produção Cultural',     color: 'var(--c-cultural)',  dark: 'var(--c-cultural-d)' },
+  };
+
+  const DAYS = [
+    { key:'seg', label:'Segunda' },
+    { key:'ter', label:'Terça' },
+    { key:'qua', label:'Quarta' },
+    { key:'qui', label:'Quinta' },
+    { key:'sex', label:'Sexta' },
+    { key:'sab', label:'Sábado' },
+    { key:'dom', label:'Domingo' },
+  ];
+
+  function uid(){
+    return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+
+  function defaultData(){
+    const wk = (cat, name, hours) => ({ id: uid(), cat, name, hours, done:false });
+    return {
+      seg: [
+        wk('freela','Freelas atuais',3),
+        wk('portfolio','Portfólio Game Audio',1),
+        wk('artistico','Projeto Artístico',1),
+        wk('vagas','Busca de vagas',1),
+        wk('usina','Usina',1),
+        wk('usina','Produtoras de áudio',0.5),
+      ],
+      ter: [
+        wk('freela','Freelas atuais',3),
+        wk('portfolio','Portfólio Game Audio',1),
+        wk('artistico','Projeto Artístico',1),
+        wk('vagas','Busca de vagas',1),
+        wk('usina','Usina',1),
+        wk('usina','Produtoras de áudio',0.5),
+      ],
+      qua: [
+        wk('freela','Freelas atuais',3),
+        wk('portfolio','Portfólio Game Audio',1),
+        wk('artistico','Projeto Artístico',1),
+        wk('vagas','Busca de vagas',1),
+        wk('usina','Usina',1),
+        wk('usina','Produtoras de áudio',0.5),
+      ],
+      qui: [
+        wk('freela','Freelas atuais',3),
+        wk('portfolio','Portfólio Game Audio',1),
+        wk('artistico','Projeto Artístico',1),
+        wk('vagas','Busca de vagas',1),
+        wk('usina','Usina',1),
+        wk('usina','Produtoras de áudio',0.5),
+      ],
+      sex: [
+        wk('freela','Freelas atuais',3),
+        wk('portfolio','Portfólio Game Audio',1),
+        wk('artistico','Projeto Artístico',1),
+        wk('vagas','Busca de vagas',1),
+        wk('usina','Usina',1),
+        wk('usina','Produtoras de áudio',0.5),
+      ],
+      sab: [
+        wk('vagas','Revisão semanal (métricas)',0.5),
+        wk('cultural','Produção Cultural',0.75),
+        wk('artistico','Projeto Artístico (livre)',1),
+      ],
+      dom: [
+        wk('artistico','Projeto Artístico (livre, opcional)',1),
+      ],
+    };
+  }
+
+  // ---------- storage helpers ----------
+  function safeGet(key){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+  function safeSet(key, val){
+    try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+  }
+
+  let data = safeGet(STORAGE_KEY) || defaultData();
+  let allTimeHours = safeGet(ALLTIME_KEY) || 0; // accumulates hours every time a task is freshly completed
+
+  // tilt is randomized once per card id and cached so it doesn't jump around on re-render
+  const tiltCache = {};
+  function tiltFor(id){
+    if(!(id in tiltCache)){
+      tiltCache[id] = (Math.random() * 3 - 1.5).toFixed(2);
+    }
+    return tiltCache[id];
+  }
+
+  function persist(){
+    safeSet(STORAGE_KEY, data);
+    safeSet(ALLTIME_KEY, allTimeHours);
+    render();
+  }
+
+  const boardEl = document.getElementById('board');
+  const channelsEl = document.getElementById('channels');
+
+  function fmtHours(h){
+    if(Number.isInteger(h)) return h + 'h';
+    return (Math.round(h*100)/100).toString().replace('.', ',') + 'h';
+  }
+
+  function render(){
+    renderBoard();
+    renderStats();
+  }
+
+  function renderBoard(){
+    boardEl.innerHTML = '';
+    DAYS.forEach(day => {
+      const col = document.createElement('div');
+      col.className = 'day-col' + ((day.key==='sab'||day.key==='dom') ? ' weekend' : '');
+      col.dataset.day = day.key;
+
+      const items = data[day.key] || [];
+      const doneCount = items.filter(i=>i.done).length;
+
+      col.innerHTML = `
+        <div class="day-head">
+          <div class="dname">${day.label}</div>
+          <div class="dcount">${doneCount}/${items.length} feitas</div>
+        </div>
+        <div class="day-body" data-day="${day.key}"></div>
+      `;
+      boardEl.appendChild(col);
+
+      const body = col.querySelector('.day-body');
+      items.forEach((item, idx) => {
+        if(idx > 0){
+          const arrow = document.createElement('div');
+          arrow.className = 'arrow-down';
+          body.appendChild(arrow);
+        }
+        body.appendChild(makeCard(item, day.key));
+      });
+
+      setupDropzone(body);
+    });
+  }
+
+  function makeCard(item, dayKey){
+    const cat = CATEGORIES[item.cat];
+    const card = document.createElement('div');
+    card.className = 'card' + (item.done ? ' done' : '');
+    card.style.setProperty('--accent', cat.color);
+    card.style.setProperty('--tilt', tiltFor(item.id) + 'deg');
+    card.draggable = true;
+    card.dataset.id = item.id;
+    card.dataset.day = dayKey;
+
+    card.innerHTML = `
+      <div class="ctop">
+        <div>
+          <div class="cname">${item.name}</div>
+          <div class="ctime">${fmtHours(item.hours)}</div>
+        </div>
+        <div class="check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#f7f2e9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', ()=> toggleDone(dayKey, item.id));
+
+    card.addEventListener('dragstart', (e)=>{
+      card.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', JSON.stringify({ id: item.id, fromDay: dayKey }));
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', ()=> card.classList.remove('dragging'));
+
+    return card;
+  }
+
+  function toggleDone(dayKey, id){
+    const item = (data[dayKey]||[]).find(i=>i.id===id);
+    if(!item) return;
+    const wasDone = item.done;
+    item.done = !item.done;
+    if(!wasDone && item.done){
+      allTimeHours += item.hours; // only add when freshly completed
+    } else if(wasDone && !item.done){
+      allTimeHours = Math.max(0, allTimeHours - item.hours); // undo
+    }
+    persist();
+  }
+
+  function setupDropzone(body){
+    body.addEventListener('dragover', (e)=>{
+      e.preventDefault();
+      const col = body.closest('.day-col');
+      col.classList.add('is-over');
+      const dragging = document.querySelector('.card.dragging');
+      if(!dragging) return;
+      const after = getDragAfterElement(body, e.clientY);
+      if(after == null){
+        body.appendChild(dragging);
+      }else{
+        body.insertBefore(dragging, after);
+      }
+    });
+
+    body.addEventListener('dragleave', (e)=>{
+      if(!body.contains(e.relatedTarget)){
+        body.closest('.day-col').classList.remove('is-over');
+      }
+    });
+
+    body.addEventListener('drop', (e)=>{
+      e.preventDefault();
+      body.closest('.day-col').classList.remove('is-over');
+      const raw = e.dataTransfer.getData('text/plain');
+      if(!raw) return;
+      const { id, fromDay } = JSON.parse(raw);
+      const toDay = body.dataset.day;
+
+      const fromArr = data[fromDay];
+      const idx = fromArr.findIndex(i=>i.id===id);
+      if(idx === -1) return;
+      const [item] = fromArr.splice(idx,1);
+
+      const domOrderIds = Array.from(body.querySelectorAll('.card')).map(c=>c.dataset.id);
+      if(!domOrderIds.includes(id)) domOrderIds.push(id);
+
+      const toArr = data[toDay];
+      const newArr = domOrderIds.map(cid => {
+        if(cid === id) return item;
+        return toArr.find(i=>i.id===cid);
+      }).filter(Boolean);
+
+      data[toDay] = newArr;
+      persist();
+    });
+  }
+
+  function getDragAfterElement(container, y){
+    const els = [...container.querySelectorAll('.card:not(.dragging)')];
+    return els.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height/2;
+      if(offset < 0 && offset > closest.offset){
+        return { offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+  }
+
+  function renderStats(){
+    let totalPlanned = 0, totalDone = 0;
+    const sums = {};
+    Object.keys(CATEGORIES).forEach(k => sums[k] = { planned:0, done:0 });
+
+    Object.values(data).forEach(items => {
+      items.forEach(item => {
+        sums[item.cat].planned += item.hours;
+        totalPlanned += item.hours;
+        if(item.done){
+          sums[item.cat].done += item.hours;
+          totalDone += item.hours;
+        }
+      });
+    });
+
+    channelsEl.innerHTML = '';
+    Object.entries(CATEGORIES).forEach(([key, cat]) => {
+      const s = sums[key];
+      const pct = s.planned > 0 ? Math.min(100, (s.done/s.planned)*100) : 0;
+      const row = document.createElement('div');
+      row.className = 'channel';
+      row.innerHTML = `
+        <div class="chead">
+          <div class="cname">${cat.label}</div>
+          <div class="cval"><b>${fmtHours(s.done)}</b> / ${fmtHours(s.planned)}</div>
+        </div>
+        <div class="meter"><div class="fill" style="width:${pct}%; background:${cat.dark};"></div></div>
+      `;
+      channelsEl.appendChild(row);
+    });
+
+    document.getElementById('weekTotal').textContent = fmtHours(totalDone);
+    document.getElementById('allTimeTotal').textContent = fmtHours(allTimeHours);
+  }
+
+  // ---------- custom confirm modal (native confirm() is blocked in sandboxed iframes) ----------
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalText = document.getElementById('modalText');
+  const modalCancel = document.getElementById('modalCancel');
+  const modalConfirm = document.getElementById('modalConfirm');
+  let modalResolve = null;
+
+  function askConfirm(message){
+    modalText.textContent = message;
+    modalOverlay.classList.add('open');
+    return new Promise(resolve => { modalResolve = resolve; });
+  }
+  function closeModal(result){
+    modalOverlay.classList.remove('open');
+    if(modalResolve){ modalResolve(result); modalResolve = null; }
+  }
+  modalCancel.addEventListener('click', ()=> closeModal(false));
+  modalConfirm.addEventListener('click', ()=> closeModal(true));
+  modalOverlay.addEventListener('click', (e)=>{
+    if(e.target === modalOverlay) closeModal(false);
+  });
+
+  document.getElementById('resetWeekBtn').addEventListener('click', async ()=>{
+    const ok = await askConfirm('Começar nova semana? Os checks serão desmarcados (o total geral continua somado).');
+    if(!ok) return;
+    Object.values(data).forEach(items => items.forEach(i => i.done = false));
+    persist();
+  });
+
+  document.getElementById('resetAllBtn').addEventListener('click', async ()=>{
+    const ok = await askConfirm('Zerar TUDO, incluindo o total geral acumulado? Essa ação não pode ser desfeita.');
+    if(!ok) return;
+    Object.values(data).forEach(items => items.forEach(i => i.done = false));
+    allTimeHours = 0;
+    persist();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
